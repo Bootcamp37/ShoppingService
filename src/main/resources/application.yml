@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: shopping-service
+  data:
+    mongodb:
+      database: db_shopping
+      host: localhost
+      port: 27021
+server:
+  port: 8084
+message:
+  path-shopping: /api/v1/shoppings
