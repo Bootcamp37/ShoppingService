@@ -1,4 +1,4 @@
-package com.nttdata.bootcamp.ShoppingService.domain.mapper;
+package com.nttdata.bootcamp.ShoppingService.infraestructure;
 
 import com.nttdata.bootcamp.ShoppingService.domain.dto.ShoppingRequest;
 import com.nttdata.bootcamp.ShoppingService.domain.dto.ShoppingResponse;

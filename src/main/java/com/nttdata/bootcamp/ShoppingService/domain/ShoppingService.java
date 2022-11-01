@@ -3,7 +3,7 @@ package com.nttdata.bootcamp.ShoppingService.domain;
 import com.nttdata.bootcamp.ShoppingService.domain.dto.CustomerActiveProductRequest;
 import com.nttdata.bootcamp.ShoppingService.domain.dto.ShoppingRequest;
 import com.nttdata.bootcamp.ShoppingService.domain.dto.ShoppingResponse;
-import com.nttdata.bootcamp.ShoppingService.domain.mapper.IShoppingMapper;
+import com.nttdata.bootcamp.ShoppingService.infraestructure.IShoppingMapper;
 import com.nttdata.bootcamp.ShoppingService.infraestructure.IShoppingRepository;
 import com.nttdata.bootcamp.ShoppingService.infraestructure.IShoppingService;
 import lombok.RequiredArgsConstructor;

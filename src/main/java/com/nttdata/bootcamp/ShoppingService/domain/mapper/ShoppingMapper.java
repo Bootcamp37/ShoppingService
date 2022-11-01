@@ -3,6 +3,7 @@ package com.nttdata.bootcamp.ShoppingService.domain.mapper;
 import com.nttdata.bootcamp.ShoppingService.domain.dto.ShoppingRequest;
 import com.nttdata.bootcamp.ShoppingService.domain.dto.ShoppingResponse;
 import com.nttdata.bootcamp.ShoppingService.domain.entity.Shopping;
+import com.nttdata.bootcamp.ShoppingService.infraestructure.IShoppingMapper;
 import org.springframework.stereotype.Component;
 
 @Component
