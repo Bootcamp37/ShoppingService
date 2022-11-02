@@ -40,25 +40,25 @@ public class ShoppingService implements IShoppingService {
     }
 
     @Override
-    public Mono<ShoppingResponse> save(ShoppingRequest request) {
+    public Mono<ShoppingResponse> save(Mono<ShoppingRequest> request) {
         // Existe la cuenta?
-        return customerProductRepository.getById(request.getCustomerActiveProductId())
+        return request.flatMap(e ->
+            customerProductRepository.getById(e.getCustomerActiveProductId())
                 .flatMap(customerActiveProductResponse -> {
                     // Coloca la fecha
-                    request.setShoppingDate(getDate());
+                    e.setShoppingDate(getDate());
                     // Tiene saldo?
-                    if ((customerActiveProductResponse.getLineOfCredit() - customerActiveProductResponse.getDebt()) < request.getAmount()) {
+                    if ((customerActiveProductResponse.getLineOfCredit() - customerActiveProductResponse.getDebt()) < e.getAmount()) {
                         // Retorna error
                         return Mono.error(RuntimeException::new);
                     }
-
                     CustomerActiveProductRequest update = new CustomerActiveProductRequest();
                     BeanUtils.copyProperties(customerActiveProductResponse, update);
-                    update.setDebt(customerActiveProductResponse.getDebt() + request.getAmount());
+                    update.setDebt(customerActiveProductResponse.getDebt() + e.getAmount());
                     // Actualizar saldo
-                    return customerProductRepository.update(update, request.getCustomerActiveProductId())
+                    return customerProductRepository.update(update, e.getCustomerActiveProductId())
                             // Guardar operacion
-                            .flatMap(p -> Mono.just(request))
+                            .flatMap(p -> Mono.just(e))
                             .map(mapper::toEntity)
                             .flatMap(repository::save)
                             .map(mapper::toResponse)
@@ -66,11 +66,11 @@ public class ShoppingService implements IShoppingService {
                 })
                 // No Existe
                 // Mandar error
-                .switchIfEmpty(Mono.error(RuntimeException::new));
+                .switchIfEmpty(Mono.error(RuntimeException::new)));
     }
 
     @Override
-    public Mono<ShoppingResponse> update(ShoppingRequest request, String id) {
+    public Mono<ShoppingResponse> update(Mono<ShoppingRequest> request, String id) {
         return Mono.just(new ShoppingResponse());
     }
 

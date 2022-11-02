@@ -10,9 +10,9 @@ public interface IShoppingService {
 
     Mono<ShoppingResponse> getById(String id);
 
-    Mono<ShoppingResponse> save(ShoppingRequest request);
+    Mono<ShoppingResponse> save(Mono<ShoppingRequest> request);
 
-    Mono<ShoppingResponse> update(ShoppingRequest request, String id);
+    Mono<ShoppingResponse> update(Mono<ShoppingRequest> request, String id);
 
     Mono<ShoppingResponse> delete(String id);
 }
