@@ -7,6 +7,7 @@ import com.nttdata.bootcamp.ShoppingService.infraestructure.IShoppingMapper;
 import com.nttdata.bootcamp.ShoppingService.infraestructure.IShoppingRepository;
 import com.nttdata.bootcamp.ShoppingService.infraestructure.IShoppingService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.time.format.DateTimeFormatter;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ShoppingService implements IShoppingService {
     @Autowired
     private final IShoppingRepository repository;
@@ -28,12 +30,14 @@ public class ShoppingService implements IShoppingService {
 
     @Override
     public Flux<ShoppingResponse> getAll() {
+        log.debug("====> ShoppingService: GetAll");
         return repository.findAll()
                 .map(mapper::toResponse);
     }
 
     @Override
     public Mono<ShoppingResponse> getById(String id) {
+        log.debug("====> ShoppingService: GetById");
         return repository.findById(id)
                 .map(mapper::toResponse)
                 .switchIfEmpty(Mono.error(RuntimeException::new));
@@ -41,8 +45,10 @@ public class ShoppingService implements IShoppingService {
 
     @Override
     public Mono<ShoppingResponse> save(Mono<ShoppingRequest> request) {
+        log.debug("====> ShoppingService: Save");
         // Existe la cuenta?
-        return request.flatMap(e ->
+        return request.map(this::printDebug)
+                .flatMap(e ->
             customerProductRepository.getById(e.getCustomerActiveProductId())
                 .flatMap(customerActiveProductResponse -> {
                     // Coloca la fecha
@@ -71,11 +77,13 @@ public class ShoppingService implements IShoppingService {
 
     @Override
     public Mono<ShoppingResponse> update(Mono<ShoppingRequest> request, String id) {
+        log.debug("====> ShoppingService: Update");
         return Mono.just(new ShoppingResponse());
     }
 
     @Override
     public Mono<ShoppingResponse> delete(String id) {
+        log.debug("====> ShoppingService: Delete");
         return repository.findById(id)
                 .switchIfEmpty(Mono.error(RuntimeException::new))
                 .flatMap(deleteCustomer -> repository.delete(deleteCustomer)
@@ -83,8 +91,14 @@ public class ShoppingService implements IShoppingService {
     }
 
     public String getDate() {
+        log.debug("====> ShoppingService: GetDate");
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
         return dtf.format(now);
+    }
+    public ShoppingRequest printDebug(ShoppingRequest request){
+        log.debug("====> ShoppingService: printDebug");
+        log.debug("====> ShoppingService: Request ==> " + request.toString());
+        return request;
     }
 }

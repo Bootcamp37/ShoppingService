@@ -4,26 +4,26 @@ import com.nttdata.bootcamp.ShoppingService.domain.dto.ShoppingRequest;
 import com.nttdata.bootcamp.ShoppingService.domain.dto.ShoppingResponse;
 import com.nttdata.bootcamp.ShoppingService.domain.entity.Shopping;
 import com.nttdata.bootcamp.ShoppingService.infraestructure.IShoppingMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class ShoppingMapper implements IShoppingMapper {
     @Override
     public Shopping toEntity(ShoppingRequest request) {
+        log.debug("====> ShoppingMapper: ToEntity");
         Shopping shopping = new Shopping();
-        shopping.setCustomerActiveProductId(request.getCustomerActiveProductId());
-        shopping.setAmount(request.getAmount());
-        shopping.setShoppingDate(request.getShoppingDate());
+        BeanUtils.copyProperties(request, shopping);
         return shopping;
     }
 
     @Override
     public ShoppingResponse toResponse(Shopping shopping) {
+        log.debug("====> ShoppingMapper: ToResponse");
         ShoppingResponse shoppingResponse = new ShoppingResponse();
-        shoppingResponse.setId(shopping.getId());
-        shoppingResponse.setCustomerActiveProductId(shopping.getCustomerActiveProductId());
-        shoppingResponse.setAmount(shopping.getAmount());
-        shoppingResponse.setShoppingDate(shopping.getShoppingDate());
+        BeanUtils.copyProperties(shopping, shoppingResponse);
         return shoppingResponse;
     }
 }
