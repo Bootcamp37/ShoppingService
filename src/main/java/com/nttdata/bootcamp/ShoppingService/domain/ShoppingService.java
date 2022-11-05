@@ -30,14 +30,14 @@ public class ShoppingService implements IShoppingService {
 
     @Override
     public Flux<ShoppingResponse> getAll() {
-        log.debug("====> ShoppingService: GetAll");
+        log.info("====> ShoppingService: GetAll");
         return repository.findAll()
                 .map(mapper::toResponse);
     }
 
     @Override
     public Mono<ShoppingResponse> getById(String id) {
-        log.debug("====> ShoppingService: GetById");
+        log.info("====> ShoppingService: GetById");
         return repository.findById(id)
                 .map(mapper::toResponse)
                 .switchIfEmpty(Mono.error(RuntimeException::new));
@@ -45,45 +45,45 @@ public class ShoppingService implements IShoppingService {
 
     @Override
     public Mono<ShoppingResponse> save(Mono<ShoppingRequest> request) {
-        log.debug("====> ShoppingService: Save");
+        log.info("====> ShoppingService: Save");
         // Existe la cuenta?
         return request.map(this::printDebug)
                 .flatMap(e ->
-            customerProductRepository.getById(e.getCustomerActiveProductId())
-                .flatMap(customerActiveProductResponse -> {
-                    // Coloca la fecha
-                    e.setShoppingDate(getDate());
-                    // Tiene saldo?
-                    if ((customerActiveProductResponse.getLineOfCredit() - customerActiveProductResponse.getDebt()) < e.getAmount()) {
-                        // Retorna error
-                        return Mono.error(RuntimeException::new);
-                    }
-                    CustomerActiveProductRequest update = new CustomerActiveProductRequest();
-                    BeanUtils.copyProperties(customerActiveProductResponse, update);
-                    update.setDebt(customerActiveProductResponse.getDebt() + e.getAmount());
-                    // Actualizar saldo
-                    return customerProductRepository.update(update, e.getCustomerActiveProductId())
-                            // Guardar operacion
-                            .flatMap(p -> Mono.just(e))
-                            .map(mapper::toEntity)
-                            .flatMap(repository::save)
-                            .map(mapper::toResponse)
-                            .switchIfEmpty(Mono.error(RuntimeException::new));
-                })
-                // No Existe
-                // Mandar error
-                .switchIfEmpty(Mono.error(RuntimeException::new)));
+                        customerProductRepository.getById(e.getCustomerActiveProductId())
+                                .flatMap(customerActiveProductResponse -> {
+                                    // Coloca la fecha
+                                    e.setDate(getDate());
+                                    // Tiene saldo?
+                                    if ((customerActiveProductResponse.getLineOfCredit() - customerActiveProductResponse.getDebt()) < e.getAmount()) {
+                                        // Retorna error
+                                        return Mono.error(RuntimeException::new);
+                                    }
+                                    CustomerActiveProductRequest update = new CustomerActiveProductRequest();
+                                    BeanUtils.copyProperties(customerActiveProductResponse, update);
+                                    update.setDebt(customerActiveProductResponse.getDebt() + e.getAmount());
+                                    // Actualizar saldo
+                                    return customerProductRepository.update(update, e.getCustomerActiveProductId())
+                                            // Guardar operacion
+                                            .flatMap(p -> Mono.just(e))
+                                            .map(mapper::toEntity)
+                                            .flatMap(repository::save)
+                                            .map(mapper::toResponse)
+                                            .switchIfEmpty(Mono.error(RuntimeException::new));
+                                })
+                                // No Existe
+                                // Mandar error
+                                .switchIfEmpty(Mono.error(RuntimeException::new)));
     }
 
     @Override
     public Mono<ShoppingResponse> update(Mono<ShoppingRequest> request, String id) {
-        log.debug("====> ShoppingService: Update");
+        log.info("====> ShoppingService: Update");
         return Mono.just(new ShoppingResponse());
     }
 
     @Override
     public Mono<ShoppingResponse> delete(String id) {
-        log.debug("====> ShoppingService: Delete");
+        log.info("====> ShoppingService: Delete");
         return repository.findById(id)
                 .switchIfEmpty(Mono.error(RuntimeException::new))
                 .flatMap(deleteCustomer -> repository.delete(deleteCustomer)
@@ -91,14 +91,15 @@ public class ShoppingService implements IShoppingService {
     }
 
     public String getDate() {
-        log.debug("====> ShoppingService: GetDate");
+        log.info("====> ShoppingService: GetDate");
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
         return dtf.format(now);
     }
-    public ShoppingRequest printDebug(ShoppingRequest request){
-        log.debug("====> ShoppingService: printDebug");
-        log.debug("====> ShoppingService: Request ==> " + request.toString());
+
+    public ShoppingRequest printDebug(ShoppingRequest request) {
+        log.info("====> ShoppingService: printDebug");
+        log.info("====> ShoppingService: Request ==> " + request.toString());
         return request;
     }
 }

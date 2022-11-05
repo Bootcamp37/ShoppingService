@@ -27,33 +27,34 @@ public class ShoppingController {
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     public Flux<ShoppingResponse> getAll() {
-        log.debug("====> ShoppingController: GetAll");
+        log.info("====> ShoppingController: GetAll");
         return service.getAll();
     }
 
     @GetMapping(path = "/{id}")
     @ResponseBody
     public ResponseEntity<Mono<ShoppingResponse>> getById(@PathVariable String id) {
-        log.debug("====> ShoppingController: GetById");
+        log.info("====> ShoppingController: GetById");
         Mono<ShoppingResponse> shoppingResponseMono = service.getById(id);
         return new ResponseEntity<>(shoppingResponseMono, shoppingResponseMono != null ? HttpStatus.OK : HttpStatus.NOT_FOUND);
     }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<ShoppingResponse> save(@RequestBody ShoppingRequest request) {
-        log.debug("====> ShoppingController: Save");
+        log.info("====> ShoppingController: Save");
         return service.save(Mono.just(request));
     }
 
     @PutMapping("/update/{id}")
     public Mono<ShoppingResponse> update(@RequestBody ShoppingRequest request, @PathVariable String id) {
-        log.debug("====> ShoppingController: Update");
+        log.info("====> ShoppingController: Update");
         return service.update(Mono.just(request), id);
     }
 
     @DeleteMapping("/delete/{id}")
     public Mono<ResponseEntity<Void>> delete(@PathVariable String id) {
-        log.debug("====> ShoppingController: Delete");
+        log.info("====> ShoppingController: Delete");
         return service.delete(id)
                 .map(r -> ResponseEntity.ok().<Void>build())
                 .defaultIfEmpty(ResponseEntity.notFound().build());

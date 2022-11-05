@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 public class ShoppingMapper implements IShoppingMapper {
     @Override
     public Shopping toEntity(ShoppingRequest request) {
-        log.debug("====> ShoppingMapper: ToEntity");
+        log.info("====> ShoppingMapper: ToEntity");
         Shopping shopping = new Shopping();
         BeanUtils.copyProperties(request, shopping);
         return shopping;
@@ -21,7 +21,7 @@ public class ShoppingMapper implements IShoppingMapper {
 
     @Override
     public ShoppingResponse toResponse(Shopping shopping) {
-        log.debug("====> ShoppingMapper: ToResponse");
+        log.info("====> ShoppingMapper: ToResponse");
         ShoppingResponse shoppingResponse = new ShoppingResponse();
         BeanUtils.copyProperties(shopping, shoppingResponse);
         return shoppingResponse;
